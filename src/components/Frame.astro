@@ -1,0 +1,47 @@
+---
+// Art-directed image frame. Renders <img> when `src` is present, otherwise a
+// procedural editorial placeholder graded by tone/crop.
+interface Props {
+  src?: string;
+  alt: string;
+  crop?: string;
+  tone?: number;
+  metaLeft?: string;
+  metaRight?: string;
+  priority?: boolean;
+  class?: string;
+  ratio?: string; // e.g. '3 / 4'
+}
+const {
+  src,
+  alt,
+  crop = 'full',
+  tone = 1,
+  metaLeft,
+  metaRight,
+  priority = false,
+  class: className = '',
+  ratio,
+} = Astro.props;
+const style = ratio ? `aspect-ratio:${ratio}` : undefined;
+---
+<figure class={`frame ${className}`} data-crop={crop} data-tone={tone} style={style} aria-label={alt}>
+  {src ? (
+    <img
+      src={src}
+      alt={alt}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding={priority ? 'sync' : 'async'}
+      fetchpriority={priority ? 'high' : 'auto'}
+    />
+  ) : (
+    <div class="frame__gen" role="img" aria-label={alt}></div>
+  )}
+  <span class="frame__grain" aria-hidden="true"></span>
+  {(metaLeft || metaRight) && (
+    <figcaption class="frame__meta" aria-hidden="true">
+      <span>{metaLeft}</span>
+      <span>{metaRight}</span>
+    </figcaption>
+  )}
+</figure>

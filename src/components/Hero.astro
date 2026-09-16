@@ -1,0 +1,108 @@
+---
+import { collectionMeta } from '@/data/products';
+---
+<section class="hero" data-hero aria-label="NØR Autumn / Winter 2026 campaign">
+  <div class="hero__media" data-hero-media>
+    <img
+      class="hero__img"
+      src="/img/hero.png"
+      alt="A model in a black oversized jacket and wide trousers stands on wet concrete before a brutalist structure, mountains under an overcast sky."
+      fetchpriority="high"
+      decoding="async"
+      data-hero-img
+    />
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__cover" data-hero-cover aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__content shell">
+    <p class="label hero__tag" data-hero-el><span>{collectionMeta.brand}</span><span>/ 01</span></p>
+
+    <div class="hero__head">
+      <p class="mono hero__season" data-hero-el>AUTUMN — WINTER <span aria-hidden="true">/</span> 2026</p>
+      <h1 class="display hero__title">
+        <span class="mask"><span data-hero-line>MADE FOR THE</span></span>
+        <span class="mask"><span data-hero-line>FEW.</span></span>
+      </h1>
+    </div>
+
+    <div class="hero__foot" data-hero-el>
+      <a class="mono link hero__scroll" href="#intro">SCROLL TO EXPLORE ↓</a>
+      <span class="mono muted">COLLECTION 01 / 06</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    height: 100svh;
+    min-height: 620px;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .hero__media { position: absolute; inset: 0; z-index: 0; }
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 68% 40%;
+    transform: scale(1.04);
+    will-change: transform;
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(8, 8, 8, 0.6) 0%, rgba(8, 8, 8, 0.15) 42%, transparent 62%),
+      linear-gradient(0deg, rgba(8, 8, 8, 0.75) 0%, rgba(8, 8, 8, 0.1) 40%, transparent 60%);
+  }
+  .hero__cover {
+    position: absolute;
+    inset: 0;
+    background: var(--black);
+    transform-origin: bottom;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-block: 96px 34px;
+    color: var(--white);
+  }
+  .hero__tag { justify-self: start; }
+  .hero__head { align-self: end; max-width: 62vw; }
+  .hero__season {
+    color: var(--gray);
+    margin-bottom: 1.1rem;
+    letter-spacing: 0.16em;
+  }
+  .hero__title {
+    font-size: var(--display-1);
+    font-weight: 800;
+  }
+  .hero__title .mask { display: block; }
+  .hero__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+  .hero__scroll { letter-spacing: 0.16em; }
+
+  @media (max-width: 640px) {
+    .hero__img { object-position: 66% 28%; }
+    .hero__scrim {
+      background:
+        linear-gradient(0deg, rgba(8, 8, 8, 0.82) 0%, rgba(8, 8, 8, 0.15) 34%, transparent 52%),
+        linear-gradient(180deg, rgba(8, 8, 8, 0.35) 0%, transparent 22%);
+    }
+    .hero__head { max-width: 100%; }
+    .hero__content { padding-block: 88px 30px; }
+    .hero__foot { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+    .hero__season { margin-bottom: 0.8rem; }
+  }
+</style>

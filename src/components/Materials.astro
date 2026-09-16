@@ -1,0 +1,69 @@
+---
+import Frame from './Frame.astro';
+import SectionLabel from './SectionLabel.astro';
+
+const materials = [
+  { spec: '480 GSM', name: 'HEAVY COTTON', note: 'WEIGHT / STRUCTURE', crop: 'macro', tone: 1 },
+  { spec: '100% WOOL', name: 'STRUCTURED FORM', note: 'DRAPE / HOLD', crop: 'detail', tone: 3 },
+  { spec: 'TECHNICAL', name: 'SHELL MEMBRANE', note: 'WEATHER / MOVEMENT', crop: 'macro', tone: 2 },
+];
+---
+<section class="mat" aria-label="Material and form">
+  <div class="shell">
+    <SectionLabel index="03" title="MATERIAL / FORM" meta="SELECTED STUDIES" />
+    <div class="mat__grid">
+      {materials.map((m, i) => (
+        <article class="mat__item" data-reveal>
+          <a class="mat__media" href="#collection" aria-label={`${m.name} material study`}>
+            <Frame crop={m.crop} tone={m.tone} ratio="4 / 5"
+              alt={`${m.name} — ${m.spec} material macro study`}
+              metaLeft={`0${i + 1}`} metaRight="MACRO" class="mat__frame" />
+          </a>
+          <div class="mat__info">
+            <span class="display mat__spec">{m.spec}</span>
+            <span class="mono mat__name">{m.name}</span>
+            <span class="mono muted">{m.note}</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .mat {
+    background: var(--black);
+    padding-block: var(--section);
+  }
+  .mat__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .mat__item:nth-child(2) { transform: translateY(clamp(2rem, 6vw, 5rem)); }
+  .mat__media {
+    display: block;
+    overflow: hidden;
+  }
+  .mat__media :global(.mat__frame) { transition: transform 0.8s var(--ease); }
+  .mat__media:hover :global(.mat__frame) { transform: scale(1.05); }
+  .mat__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 1.25rem;
+  }
+  .mat__spec { font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 700; }
+  .mat__name { letter-spacing: 0.1em; }
+
+  @media (max-width: 720px) {
+    .mat__grid { grid-template-columns: 1fr 1fr; gap: 1.25rem 1rem; }
+    .mat__item:nth-child(2) { transform: none; }
+    .mat__item:nth-child(3) { grid-column: 1 / -1; max-width: 60%; }
+  }
+  @media (max-width: 460px) {
+    .mat__grid { grid-template-columns: 1fr; }
+    .mat__item:nth-child(3) { max-width: 100%; }
+  }
+</style>

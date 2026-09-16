@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.devlog.txt
+.DS_Store
+*.log
+
+# original source drop (kept locally; canonical copy is public/img/hero.png)
+media/

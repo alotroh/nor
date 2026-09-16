@@ -1,0 +1,61 @@
+---
+import Frame from './Frame.astro';
+---
+<section class="intro on-light" id="intro" aria-label="Introduction">
+  <div class="intro__grid shell">
+    <div class="intro__type">
+      <h2 class="display intro__head">
+        <span class="mask"><span data-reveal>CLOTHES FOR</span></span>
+        <span class="mask"><span data-reveal>THE SPACE</span></span>
+        <span class="mask"><span data-reveal>BETWEEN.</span></span>
+      </h2>
+    </div>
+    <div class="intro__aside">
+      <p class="intro__p" data-reveal>
+        NØR explores contemporary silhouettes through proportion, material and
+        restraint — clothing built for the quiet distance between statement and
+        uniform.
+      </p>
+      <div class="intro__img" data-reveal>
+        <Frame crop="detail" tone={2} ratio="4 / 5"
+          alt="Fabric and construction detail from the AW26 collection"
+          metaLeft="NØR / AW26" metaRight="FIG. 01" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .intro {
+    background: var(--white);
+    color: var(--black);
+    padding-block: var(--section);
+    position: relative;
+    z-index: 5;
+  }
+  .intro__grid {
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    gap: clamp(2rem, 5vw, 6rem);
+    align-items: end;
+  }
+  .intro__head {
+    font-size: var(--display-2);
+    font-weight: 700;
+    color: var(--black);
+  }
+  .intro__head .mask { display: block; }
+  .intro__aside { display: flex; flex-direction: column; gap: 2.5rem; }
+  .intro__p {
+    font-size: var(--step-1);
+    line-height: 1.5;
+    max-width: 34ch;
+    color: #2c2b28;
+  }
+  .intro__img { width: min(100%, 320px); }
+
+  @media (max-width: 820px) {
+    .intro__grid { grid-template-columns: 1fr; align-items: start; gap: 2.75rem; }
+    .intro__img { width: min(70%, 300px); }
+  }
+</style>

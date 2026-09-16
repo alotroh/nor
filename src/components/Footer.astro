@@ -1,0 +1,44 @@
+---
+const year = 2026;
+---
+<footer class="ft">
+  <div class="ft__top shell">
+    <a class="ft__brand" href="/">NØR</a>
+    <p class="ft__line mono muted">CONTEMPORARY STUDY IN PROPORTION, MATERIAL AND MOVEMENT.</p>
+  </div>
+  <div class="ft__bottom shell mono">
+    <span class="muted">NØR / {year}</span>
+    <nav class="ft__nav" aria-label="Footer">
+      <a class="link" href="#" aria-label="Instagram (placeholder)">INSTAGRAM</a>
+      <a class="link" href="#" aria-label="Contact (placeholder)">CONTACT</a>
+    </nav>
+    <span class="muted">ALL RIGHTS RESERVED</span>
+  </div>
+</footer>
+
+<style>
+  .ft { background: var(--black); border-top: 1px solid var(--line); padding-block: clamp(3rem, 6vw, 5rem) 2rem; }
+  .ft__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-bottom: clamp(3rem, 8vw, 6rem);
+  }
+  .ft__brand { font-weight: 900; font-size: clamp(3rem, 12vw, 8rem); line-height: 0.8; letter-spacing: -0.03em; }
+  .ft__line { max-width: 28ch; text-align: right; letter-spacing: 0.1em; }
+  .ft__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1.75rem;
+  }
+  .ft__nav { display: flex; gap: 1.5rem; }
+  @media (max-width: 640px) {
+    .ft__top { flex-direction: column; gap: 1.5rem; }
+    .ft__line { text-align: left; }
+    .ft__bottom { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  }
+</style>

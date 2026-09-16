@@ -1,0 +1,99 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Cursor from '@/components/Cursor.astro';
+import Footer from '@/components/Footer.astro';
+import ProductGallery from '@/components/ProductGallery.astro';
+import ProductInfo from '@/components/ProductInfo.astro';
+import { products } from '@/data/products';
+
+export function getStaticPaths() {
+  return products.map((product, i) => ({
+    params: { slug: product.slug },
+    props: {
+      product,
+      next: products[(i + 1) % products.length],
+      index: i,
+    },
+  }));
+}
+
+const { product, next, index } = Astro.props;
+const title = `${product.name} — NØR AW26`;
+const desc = `${product.name}. ${product.description}`;
+const num = String(index + 1).padStart(2, '0');
+const total = String(products.length).padStart(2, '0');
+---
+<BaseLayout title={title} description={desc}>
+  <Header />
+  <Cursor />
+  <main id="main" class="pdp">
+    <nav class="pdp__crumbs shell mono" aria-label="Breadcrumb">
+      <a class="link" href="/#collection">← COLLECTION</a>
+      <span class="muted">{num} / {total}</span>
+    </nav>
+
+    <div class="pdp__grid shell">
+      <div class="pdp__gallery">
+        <ProductGallery product={product} />
+      </div>
+      <aside class="pdp__aside">
+        <div class="pdp__sticky">
+          <ProductInfo product={product} />
+        </div>
+      </aside>
+    </div>
+
+    <a class="pdp__next shell" href={`/objects/${next.slug}`} aria-label={`Next object: ${next.name}`}>
+      <span class="mono muted">NEXT OBJECT</span>
+      <span class="display pdp__next-name">{next.name}</span>
+      <span class="mono pdp__next-go">{next.object} →</span>
+    </a>
+  </main>
+  <Footer />
+
+  <script>
+    import '@/scripts/main.ts';
+  </script>
+</BaseLayout>
+
+<style>
+  .pdp { padding-top: 76px; }
+  .pdp__crumbs {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--line);
+    letter-spacing: 0.1em;
+  }
+  .pdp__grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    padding-block: clamp(2rem, 5vw, 4rem) var(--section);
+  }
+  .pdp__sticky { position: sticky; top: 100px; }
+
+  .pdp__next {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-block: clamp(3rem, 7vw, 6rem);
+    border-top: 1px solid var(--line);
+    text-align: center;
+    align-items: center;
+  }
+  .pdp__next-name {
+    font-size: var(--display-2);
+    font-weight: 700;
+    transition: opacity 0.4s var(--ease);
+  }
+  .pdp__next:hover .pdp__next-name { opacity: 0.55; }
+  .pdp__next-go { letter-spacing: 0.12em; }
+
+  @media (max-width: 900px) {
+    .pdp__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .pdp__sticky { position: static; }
+  }
+</style>

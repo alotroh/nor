@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/Header.astro';
+import Cursor from '@/components/Cursor.astro';
+import Hero from '@/components/Hero.astro';
+import Introduction from '@/components/Introduction.astro';
+import CollectionBrowser from '@/components/CollectionBrowser.astro';
+import Editorial from '@/components/Editorial.astro';
+import Materials from '@/components/Materials.astro';
+import Lookbook from '@/components/Lookbook.astro';
+import BrandStory from '@/components/BrandStory.astro';
+import FinalCTA from '@/components/FinalCTA.astro';
+import Footer from '@/components/Footer.astro';
+---
+<BaseLayout>
+  <Header />
+  <Cursor />
+  <main id="main">
+    <Hero />
+    <Introduction />
+    <CollectionBrowser />
+    <Editorial />
+    <Materials />
+    <Lookbook />
+    <BrandStory />
+    <FinalCTA />
+  </main>
+  <Footer />
+
+  <script>
+    import '@/scripts/main.ts';
+  </script>
+</BaseLayout>

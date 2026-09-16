@@ -1,0 +1,51 @@
+---
+import Frame from './Frame.astro';
+---
+<section class="story on-light" id="about" aria-label="About NØR">
+  <div class="story__grid shell">
+    <div class="story__type">
+      <p class="mono muted" data-reveal>NØR / STUDIO</p>
+      <h2 class="display story__head">
+        <span class="mask"><span data-reveal>FORM FOLLOWS</span></span>
+        <span class="mask"><span data-reveal>INTENTION.</span></span>
+      </h2>
+      <p class="story__p" data-reveal>
+        NØR is a study in proportion, material and movement — creating clothing
+        designed to exist beyond the season.
+      </p>
+    </div>
+    <div class="story__img" data-reveal>
+      <Frame crop="profile" tone={2} ratio="3 / 4"
+        alt="Profile study of an AW26 silhouette"
+        metaLeft="NØR / STUDIO" metaRight="AW26" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .story {
+    background: var(--white);
+    color: var(--black);
+    padding-block: var(--section);
+  }
+  .story__grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+  .story__head {
+    font-size: var(--display-2);
+    font-weight: 700;
+    color: var(--black);
+    margin: 1.75rem 0;
+  }
+  .story__head .mask { display: block; }
+  .story__p { font-size: var(--step-1); max-width: 40ch; color: #2c2b28; }
+  .story__img { width: min(100%, 360px); justify-self: end; }
+
+  @media (max-width: 820px) {
+    .story__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .story__img { width: min(75%, 320px); justify-self: start; }
+  }
+</style>

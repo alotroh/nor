@@ -1,0 +1,311 @@
+/* =============================================================================
+   NØR — GLOBAL SYSTEM
+   ========================================================================== */
+
+:root {
+  /* palette ---------------------------------------------------------------- */
+  --black: #080808;
+  --black-2: #111111;
+  --white: #e8e5df;   /* warm white */
+  --pure: #ffffff;
+  --gray: #a6a39d;
+  --line: rgba(232, 229, 223, 0.14);
+  --line-dark: rgba(8, 8, 8, 0.14);
+
+  /* type ------------------------------------------------------------------- */
+  --display: 'Archivo', -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* fluid scale ------------------------------------------------------------ */
+  --step--1: clamp(0.72rem, 0.68rem + 0.2vw, 0.8rem);
+  --step-0: clamp(0.84rem, 0.8rem + 0.2vw, 0.95rem);
+  --step-1: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --display-1: clamp(2.6rem, 1.2rem + 7vw, 9.5rem);
+  --display-2: clamp(2rem, 1rem + 5.4vw, 7rem);
+  --display-3: clamp(1.6rem, 1rem + 3vw, 3.6rem);
+
+  /* rhythm ----------------------------------------------------------------- */
+  --gutter: clamp(1.25rem, 1rem + 2.5vw, 3.75rem);
+  --section: clamp(6rem, 4rem + 10vw, 14rem);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --tab: #080808;
+  --tint: #e8e5df;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--display);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  overflow-x: clip;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+svg { display: block; max-width: 100%; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: inherit;
+}
+
+a { color: inherit; text-decoration: none; }
+
+ul { list-style: none; padding: 0; }
+
+::selection { background: var(--white); color: var(--black); }
+
+/* --- typography primitives ------------------------------------------------ */
+.display {
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.muted { color: var(--gray); }
+
+/* --- layout --------------------------------------------------------------- */
+.shell { padding-inline: var(--gutter); }
+
+.rule {
+  height: 1px;
+  background: var(--line);
+  border: 0;
+  width: 100%;
+}
+
+/* --- small technical label ------------------------------------------------ */
+.label {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray);
+  display: inline-flex;
+  gap: 0.6em;
+  align-items: baseline;
+}
+
+/* --- link reveal ---------------------------------------------------------- */
+.link {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: translateX(-101%);
+  transition: transform 0.5s var(--ease);
+}
+.link:hover::after,
+.link:focus-visible::after { transform: translateX(0); }
+
+/* --- buttons -------------------------------------------------------------- */
+.btn {
+  font-family: var(--mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 1.1rem 1.6rem;
+  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  transition: background 0.4s var(--ease), color 0.4s var(--ease);
+}
+.btn:hover { background: var(--white); color: var(--black); }
+.btn--dark:hover { background: var(--black); color: var(--white); }
+
+/* --- reveal animation primitives (JS-driven) ------------------------------ */
+[data-reveal] { will-change: transform, opacity; }
+
+.mask {
+  position: relative;
+  overflow: hidden;
+}
+.mask > * { display: block; }
+
+/* focus ------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
+.on-light :focus-visible { outline-color: var(--black); }
+
+/* =============================================================================
+   ART-DIRECTED FRAME (procedural photography placeholder)
+   Swap for <img> by supplying `src` in the data model.
+   ========================================================================== */
+.frame {
+  position: relative;
+  overflow: hidden;
+  background: var(--black-2);
+  isolation: isolate;
+}
+.frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.frame__gen {
+  position: absolute;
+  inset: 0;
+}
+.frame__grain {
+  position: absolute;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.13;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 3;
+}
+.frame__meta {
+  position: absolute;
+  z-index: 4;
+  left: 1rem;
+  bottom: 0.9rem;
+  right: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(232, 229, 223, 0.55);
+  mix-blend-mode: difference;
+}
+
+/* tonal grading — 0 (black) → 5 (bone). Concrete base + raking studio light. */
+.frame__gen {
+  background-color: #1a1a18;
+  background-image:
+    linear-gradient(115deg, rgba(255,255,255,0.10) 0%, transparent 34%),
+    radial-gradient(130% 120% at 22% 8%, rgba(255,255,255,0.06), transparent 46%),
+    radial-gradient(120% 110% at 70% 115%, rgba(0,0,0,0.55), transparent 55%);
+}
+.frame[data-tone='0'] .frame__gen { background-color: #131311; }
+.frame[data-tone='1'] .frame__gen { background-color: #201f1c; }
+.frame[data-tone='2'] .frame__gen { background-color: #34332e; }
+.frame[data-tone='3'] .frame__gen { background-color: #56534b; }
+.frame[data-tone='4'] .frame__gen { background-color: #9a968b; }
+.frame[data-tone='5'] .frame__gen { background-color: #c9c5bb; }
+
+/* crop-specific compositional overlays */
+.frame__gen::before,
+.frame__gen::after { content: ''; position: absolute; inset: 0; }
+
+/* soft standing figure suggestion for full / portrait / profile */
+.frame[data-crop='full'] .frame__gen::before,
+.frame[data-crop='portrait'] .frame__gen::before,
+.frame[data-crop='profile'] .frame__gen::before {
+  background:
+    /* rim light down the right edge of the body */
+    linear-gradient(90deg, transparent 62%, rgba(255,255,255,0.12) 65%, transparent 69%),
+    /* head (overlaps torso top so they merge) */
+    radial-gradient(7.5% 6% at 55% 25%, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 62%, transparent 82%),
+    /* shoulders */
+    radial-gradient(20% 12% at 55% 37%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 62%, transparent 80%),
+    /* torso + legs — tall single mass */
+    radial-gradient(15% 42% at 55% 66%, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 55%, transparent 80%),
+    /* floor contact shadow */
+    radial-gradient(26% 5% at 54% 98%, rgba(0,0,0,0.65), transparent 72%),
+    linear-gradient(180deg, transparent 58%, rgba(0,0,0,0.42) 100%);
+}
+.frame[data-crop='portrait'] .frame__gen::before { background-size: 155% 150%; background-position: 46% 18%; }
+.frame[data-crop='profile'] .frame__gen::before { transform: scaleX(-1); }
+
+/* environmental: architectural verticals + figure */
+.frame[data-crop='environment'] .frame__gen::before {
+  background:
+    radial-gradient(5% 4.5% at 70% 30%, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 62%, transparent 82%),
+    radial-gradient(9% 34% at 70% 66%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.45) 55%, transparent 80%),
+    radial-gradient(16% 4% at 70% 97%, rgba(0,0,0,0.6), transparent 72%);
+}
+.frame[data-crop='environment'] .frame__gen::after {
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.35) 0 2px, transparent 2px 40%, rgba(255,255,255,0.05) 40% 41%, transparent 41%),
+    linear-gradient(180deg, transparent 62%, rgba(0,0,0,0.15) 62.5%, transparent 63%),
+    radial-gradient(80% 60% at 30% 30%, rgba(255,255,255,0.05), transparent 60%);
+}
+
+/* fabric weave for macro / detail */
+.frame[data-crop='macro'] .frame__gen::before {
+  background:
+    repeating-linear-gradient(38deg, rgba(0,0,0,0.22) 0 3px, rgba(255,255,255,0.05) 3px 4px, transparent 4px 8px),
+    repeating-linear-gradient(-52deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 9px);
+}
+.frame[data-crop='macro'] .frame__gen::after {
+  background: radial-gradient(70% 70% at 40% 35%, rgba(255,255,255,0.10), transparent 60%),
+    radial-gradient(90% 90% at 70% 90%, rgba(0,0,0,0.5), transparent 65%);
+}
+.frame[data-crop='detail'] .frame__gen::before {
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.28) 0 1px, transparent 1px 16px),
+    linear-gradient(90deg, rgba(255,255,255,0.06), transparent 40%);
+}
+.frame[data-crop='detail'] .frame__gen::after {
+  background: radial-gradient(55% 62% at 52% 42%, rgba(0,0,0,0.45), transparent 78%);
+}
+
+/* subtle vignette on every frame */
+.frame__gen { box-shadow: inset 0 0 120px 16px rgba(0,0,0,0.45); }
+.frame[data-tone='4'] .frame__gen,
+.frame[data-tone='5'] .frame__gen { box-shadow: inset 0 0 120px 16px rgba(0,0,0,0.28); }
+
+/* reduced motion ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.12s !important;
+  }
+}

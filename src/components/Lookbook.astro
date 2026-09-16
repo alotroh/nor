@@ -1,0 +1,124 @@
+---
+import Frame from './Frame.astro';
+import SectionLabel from './SectionLabel.astro';
+import { lookbook } from '@/data/products';
+
+// Irregular editorial placement on a 12-col grid: [colStart, span, pushTop]
+const layout = [
+  [1, 5, 0], [8, 5, 8], [2, 4, 4], [7, 6, 0],
+  [1, 6, 6], [9, 4, 2], [3, 5, 0], [8, 4, 7],
+  [1, 4, 3], [6, 4, 0], [10, 3, 5], [3, 7, 4],
+];
+---
+<section class="lb" id="lookbook" aria-label="Lookbook">
+  <div class="shell">
+    <SectionLabel index="04" title="LOOKBOOK / 01" meta="12 LOOKS" />
+  </div>
+
+  <div class="lb__grid shell">
+    {lookbook.map((look, i) => {
+      const [start, span, push] = layout[i];
+      return (
+        <button
+          class="lb__item"
+          style={`--start:${start};--span:${span};--push:${push * 0.6}rem`}
+          data-look={i}
+          data-lightbox
+          aria-label={`Open look ${look.n} — ${look.title}`}
+        >
+          <span class="lb__media mask">
+            <Frame crop={look.crop} tone={look.tone} src={look.src} alt={look.alt}
+              class="lb__frame" ratio={span >= 6 ? '4 / 3' : '3 / 4'} />
+          </span>
+          <span class="lb__cap mono">
+            <span>{look.n} / 12</span>
+            <span class="muted">{look.title}</span>
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</section>
+
+<!-- Fullscreen viewer -->
+<div class="lbx" data-lbx hidden aria-modal="true" role="dialog" aria-label="Lookbook viewer">
+  <div class="lbx__top shell">
+    <span class="mono"><span data-lbx-n>01</span> / 12</span>
+    <button class="mono lbx__close" data-lbx-close>CLOSE ✕</button>
+  </div>
+  <div class="lbx__stage">
+    <div class="lbx__frame mask" data-lbx-frame></div>
+  </div>
+  <div class="lbx__nav shell">
+    <button class="mono link" data-lbx-prev>← PREV</button>
+    <span class="mono muted" data-lbx-title></span>
+    <button class="mono link" data-lbx-next>NEXT →</button>
+  </div>
+</div>
+
+<style>
+  .lb { background: var(--black); padding-block: var(--section); }
+  .lb__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(1rem, 2.5vw, 2rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+  .lb__item {
+    grid-column: var(--start) / span var(--span);
+    margin-top: var(--push);
+    text-align: left;
+    display: block;
+  }
+  .lb__media { display: block; overflow: hidden; }
+  .lb__media :global(.lb__frame) { transition: transform 0.8s var(--ease); }
+  .lb__item:hover :global(.lb__frame) { transform: scale(1.04); }
+  .lb__cap {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* lightbox */
+  .lbx {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease);
+  }
+  .lbx[data-open] { opacity: 1; pointer-events: auto; }
+  .lbx__top, .lbx__nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 76px;
+    color: var(--white);
+  }
+  .lbx__stage {
+    flex: 1;
+    display: grid;
+    place-items: center;
+    padding: 0 var(--gutter);
+    min-height: 0;
+  }
+  .lbx__frame {
+    height: min(72vh, 78vw);
+    aspect-ratio: 3 / 4;
+    max-width: 100%;
+  }
+  .lbx__frame :global(.frame) { width: 100%; height: 100%; }
+
+  @media (max-width: 760px) {
+    .lb__grid { grid-template-columns: repeat(6, 1fr); gap: 1rem; }
+    .lb__item { grid-column: var(--m-start, 1) / span var(--m-span, 6); margin-top: 0; }
+    .lb__item:nth-child(odd) { --m-start: 1; --m-span: 4; }
+    .lb__item:nth-child(even) { --m-start: 3; --m-span: 4; margin-top: -2rem; }
+  }
+</style>

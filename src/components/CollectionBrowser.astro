@@ -1,0 +1,166 @@
+---
+import Frame from './Frame.astro';
+import SectionLabel from './SectionLabel.astro';
+import { products, collectionMeta } from '@/data/products';
+const total = String(products.length).padStart(2, '0');
+---
+<section class="col" id="collection" aria-label="Collection 01">
+  <div class="shell">
+    <SectionLabel index="02" title="COLLECTION 01" meta={collectionMeta.season} />
+    <h2 class="display col__title" data-reveal>THE OBJECTS</h2>
+  </div>
+
+  <div class="col__browser shell" data-browser aria-roledescription="carousel">
+    <!-- stage -->
+    <div class="col__stage">
+      {products.map((p, i) => (
+        <article class="slide" data-slide data-index={i} aria-hidden={i !== 0 ? 'true' : 'false'}>
+          <div class="slide__meta">
+            <span class="mono muted">{p.object}</span>
+            <span class="mono muted slide__cat">{p.category}</span>
+          </div>
+
+          <a class="slide__media mask" href={`/objects/${p.slug}`} data-slide-media aria-label={`View ${p.name}`}>
+            <Frame crop={p.images[0].crop} tone={p.images[0].tone} ratio="4 / 5"
+              src={p.images[0].src} alt={p.images[0].alt}
+              priority={i === 0}
+              metaLeft={`NØR / ${p.id}`} metaRight={collectionMeta.seasonShort} />
+            <span class="slide__view mono" data-cursor-hint>VIEW OBJECT →</span>
+          </a>
+
+          <div class="slide__info">
+            <h3 class="display slide__name">{p.name}</h3>
+            <div class="slide__rows mono">
+              <span class="slide__price">€{p.price}</span>
+              <span class="muted">{p.color}</span>
+            </div>
+            <a class="link mono slide__cta" href={`/objects/${p.slug}`}>VIEW OBJECT →</a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- controls -->
+    <div class="col__controls">
+      <div class="col__count mono">
+        <span data-count-current>01</span>
+        <span class="col__bar"><span class="col__fill" data-count-fill></span></span>
+        <span class="muted">{total}</span>
+      </div>
+      <div class="col__nav">
+        <button class="mono col__btn" data-prev aria-label="Previous object">← PREV</button>
+        <button class="mono col__btn" data-next aria-label="Next object">NEXT →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .col {
+    background: var(--black);
+    padding-block: var(--section) clamp(4rem, 8vw, 8rem);
+    position: relative;
+    z-index: 6;
+  }
+  .col__title {
+    font-size: var(--display-2);
+    margin-top: 1.5rem;
+  }
+  .col__browser { margin-top: clamp(2.5rem, 6vw, 5rem); }
+
+  .col__stage {
+    position: relative;
+    display: grid;
+  }
+  .slide {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: minmax(110px, 0.7fr) 1.25fr minmax(200px, 0.9fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+  }
+  /* JS hides inactive; no-JS shows them stacked with spacing */
+  .col__browser:not([data-ready]) .slide { margin-bottom: 5rem; }
+  .col__browser[data-ready] .slide {
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s var(--ease), visibility 0.5s var(--ease);
+  }
+  .col__browser[data-ready] .slide[data-active] {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .slide__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-self: start;
+    padding-top: 0.5rem;
+  }
+  .slide__cat { writing-mode: initial; }
+
+  .slide__media {
+    position: relative;
+    display: block;
+    background: var(--black-2);
+  }
+  .slide__media .frame { transition: transform 0.7s var(--ease); }
+  .slide__media:hover .frame { transform: scale(1.03); }
+  .slide__view {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 5;
+    color: var(--white);
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+    letter-spacing: 0.12em;
+  }
+  .slide__media:hover .slide__view { opacity: 1; transform: none; }
+
+  .slide__info { display: flex; flex-direction: column; gap: 1.5rem; align-items: start; }
+  .slide__name { font-size: var(--display-3); font-weight: 700; }
+  .slide__rows { display: flex; gap: 1.5rem; font-size: var(--step-0); letter-spacing: 0.08em; }
+  .slide__price { font-size: var(--step-0); }
+  .slide__cta { margin-top: 0.5rem; }
+
+  .col__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+  }
+  .col__count { display: flex; align-items: center; gap: 1rem; letter-spacing: 0.1em; }
+  .col__bar { width: 120px; height: 1px; background: var(--line); position: relative; overflow: hidden; }
+  .col__fill { position: absolute; inset: 0; background: var(--white); transform-origin: left; transform: scaleX(0.16); transition: transform 0.6s var(--ease); }
+  .col__nav { display: flex; gap: 1.5rem; }
+  .col__btn { letter-spacing: 0.12em; padding: 0.4rem 0; transition: opacity 0.3s var(--ease); }
+  .col__btn:hover { opacity: 0.55; }
+
+  @media (max-width: 900px) {
+    .slide {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .slide__meta { flex-direction: row; justify-content: space-between; }
+    .slide__media { max-width: 560px; }
+    .col__browser:not([data-ready]) .slide { margin-bottom: 3.5rem; }
+  }
+  /* Mobile: stacked vertical sequence, no stepper controls */
+  @media (max-width: 760px) {
+    .col__controls { display: none; }
+    .slide__cta { display: inline-block; }
+    .col__browser:not([data-ready]) .slide:last-child { margin-bottom: 0; }
+  }
+  @media (max-width: 520px) {
+    .col__controls { flex-direction: column; gap: 1.25rem; align-items: stretch; }
+    .col__nav { justify-content: space-between; }
+  }
+</style>
