@@ -91,10 +91,10 @@ export const products: Product[] = [
       'Wide, weighted leg with an elongated line. Tonal utility pocket, pleated front, clean interior finish.',
     details: ['COTTON / NYLON', 'WIDE LEG', 'UTILITY POCKET', 'PLEATED FRONT'],
     images: [
-      { alt: 'Wide cargo trouser, full-length front view', crop: 'full', tone: 1 },
-      { alt: 'Cargo pocket and seam construction detail', crop: 'detail', tone: 2 },
-      { alt: 'Technical cotton weave, macro study', crop: 'macro', tone: 0 },
-      { alt: 'Wide cargo trouser, environmental shot against architecture', crop: 'environment', tone: 3 },
+      { src: '/img/object-003-1.jpg', alt: 'Wide cargo trouser, full-length front view', crop: 'full', tone: 1 },
+      { src: '/img/object-003-2.jpg', alt: 'Cargo pocket and seam construction detail', crop: 'detail', tone: 2 },
+      { src: '/img/object-003-3.jpg', alt: 'Technical cotton weave, macro study', crop: 'macro', tone: 0 },
+      { src: '/img/object-003-4.jpg', alt: 'Wide cargo trouser, environmental shot against architecture', crop: 'environment', tone: 3 },
     ],
   },
   {
