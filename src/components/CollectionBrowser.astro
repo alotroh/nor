@@ -13,6 +13,12 @@ const total = String(products.length).padStart(2, '0');
   <div class="col__browser shell" data-browser aria-roledescription="carousel">
     <!-- stage -->
     <div class="col__stage">
+      <button class="col__arrow col__arrow--prev" data-prev aria-label="Previous object">
+        <span aria-hidden="true">←</span>
+      </button>
+      <button class="col__arrow col__arrow--next" data-next aria-label="Next object">
+        <span aria-hidden="true">→</span>
+      </button>
       {products.map((p, i) => (
         <article class="slide" data-slide data-index={i} aria-hidden={i !== 0 ? 'true' : 'false'}>
           <div class="slide__meta">
@@ -47,10 +53,6 @@ const total = String(products.length).padStart(2, '0');
         <span class="col__bar"><span class="col__fill" data-count-fill></span></span>
         <span class="muted">{total}</span>
       </div>
-      <div class="col__nav">
-        <button class="mono col__btn" data-prev aria-label="Previous object">← PREV</button>
-        <button class="mono col__btn" data-next aria-label="Next object">NEXT →</button>
-      </div>
     </div>
   </div>
 </section>
@@ -72,6 +74,42 @@ const total = String(products.length).padStart(2, '0');
     position: relative;
     display: grid;
   }
+
+  /* Large, always-visible carousel arrows, vertically centred on the sides */
+  .col__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 12;
+    width: clamp(48px, 4.5vw, 64px);
+    height: clamp(48px, 4.5vw, 64px);
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    background: rgba(12, 12, 11, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--white);
+    font-size: clamp(1.25rem, 1.6vw, 1.6rem);
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease),
+      transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  }
+  .col__arrow span { transform: translateY(-1px); }
+  .col__arrow--prev { left: calc(var(--gutter) * -0.45); }
+  .col__arrow--next { right: calc(var(--gutter) * -0.45); }
+  .col__arrow:hover {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+    transform: translateY(-50%) scale(1.06);
+  }
+  .col__arrow:active { transform: translateY(-50%) scale(0.96); }
+  .col__arrow:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+  /* No JS: arrows do nothing, hide them */
+  .col__browser:not([data-ready]) .col__arrow { display: none; }
   .slide {
     grid-area: 1 / 1;
     display: grid;
@@ -130,7 +168,7 @@ const total = String(products.length).padStart(2, '0');
 
   .col__controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-top: clamp(2rem, 4vw, 3rem);
     border-top: 1px solid var(--line);
@@ -139,9 +177,6 @@ const total = String(products.length).padStart(2, '0');
   .col__count { display: flex; align-items: center; gap: 1rem; letter-spacing: 0.1em; }
   .col__bar { width: 120px; height: 1px; background: var(--line); position: relative; overflow: hidden; }
   .col__fill { position: absolute; inset: 0; background: var(--white); transform-origin: left; transform: scaleX(0.16); transition: transform 0.6s var(--ease); }
-  .col__nav { display: flex; gap: 1.5rem; }
-  .col__btn { letter-spacing: 0.12em; padding: 0.4rem 0; transition: opacity 0.3s var(--ease); }
-  .col__btn:hover { opacity: 0.55; }
 
   @media (max-width: 900px) {
     .slide {
@@ -153,14 +188,16 @@ const total = String(products.length).padStart(2, '0');
     .slide__media { max-width: 560px; }
     .col__browser:not([data-ready]) .slide { margin-bottom: 3.5rem; }
   }
-  /* Mobile: stacked vertical sequence, no stepper controls */
+  /* Single-column: keep arrows but tuck them to the very edge */
+  @media (max-width: 900px) {
+    .col__arrow--prev { left: 0; }
+    .col__arrow--next { right: 0; }
+  }
+  /* Mobile: stacked vertical sequence, no stepper controls or arrows */
   @media (max-width: 760px) {
     .col__controls { display: none; }
+    .col__arrow { display: none; }
     .slide__cta { display: inline-block; }
     .col__browser:not([data-ready]) .slide:last-child { margin-bottom: 0; }
-  }
-  @media (max-width: 520px) {
-    .col__controls { flex-direction: column; gap: 1.25rem; align-items: stretch; }
-    .col__nav { justify-content: space-between; }
   }
 </style>
