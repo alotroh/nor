@@ -53,10 +53,10 @@ export const products: Product[] = [
       'Heavyweight wool construction with an oversized architectural silhouette. Dropped shoulder, extended length, weighted drape.',
     details: ['100% WOOL', '480 GSM', 'OVERSIZED FIT', 'CONCEALED PLACKET'],
     images: [
-      { alt: 'Structured wool coat, full-length front view against concrete', crop: 'full', tone: 1 },
-      { alt: 'Structured wool coat collar and shoulder construction detail', crop: 'detail', tone: 2 },
-      { alt: 'Wool surface texture, macro study', crop: 'macro', tone: 0 },
-      { alt: 'Structured wool coat, side profile silhouette', crop: 'profile', tone: 1 },
+      { src: '/img/object-001-1.jpg', alt: 'Structured wool coat, full-length front view against concrete', crop: 'full', tone: 1 },
+      { src: '/img/object-001-2.jpg', alt: 'Structured wool coat collar and shoulder construction detail', crop: 'detail', tone: 2 },
+      { src: '/img/object-001-3.jpg', alt: 'Wool surface texture, macro study', crop: 'macro', tone: 0 },
+      { src: '/img/object-001-4.jpg', alt: 'Structured wool coat, side profile silhouette', crop: 'profile', tone: 1 },
     ],
   },
   {
@@ -72,10 +72,10 @@ export const products: Product[] = [
       'Dense loopback cotton with a boxed volume through the body. Structured hood, ribbed hem, matte hardware.',
     details: ['100% COTTON', '520 GSM', 'BOXED FIT', 'LOOPBACK INTERIOR'],
     images: [
-      { alt: 'Heavyweight hoodie worn, three-quarter studio view', crop: 'full', tone: 2 },
-      { alt: 'Hood construction and drawcord detail', crop: 'detail', tone: 3 },
-      { alt: 'Loopback cotton texture, macro study', crop: 'macro', tone: 1 },
-      { alt: 'Heavyweight hoodie, back silhouette', crop: 'profile', tone: 2 },
+      { src: '/img/object-002-1.jpg', alt: 'Heavyweight hoodie worn, three-quarter studio view', crop: 'full', tone: 2 },
+      { src: '/img/object-002-2.jpg', alt: 'Hood construction and drawcord detail', crop: 'detail', tone: 3 },
+      { src: '/img/object-002-3.jpg', alt: 'Loopback cotton texture, macro study', crop: 'macro', tone: 1 },
+      { src: '/img/object-002-4.jpg', alt: 'Heavyweight hoodie, back silhouette', crop: 'profile', tone: 2 },
     ],
   },
   {
