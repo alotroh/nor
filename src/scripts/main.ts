@@ -99,12 +99,49 @@ function initBag() {
       localStorage.setItem('nor-bag', String(readBag() + 1));
       paintBag();
       btn.setAttribute('data-added', '');
-      const orig = btn.querySelector('[data-add-label]');
-      if (orig) orig.textContent = 'ADDED TO BAG';
+      const orig = btn.querySelector<HTMLElement>('[data-add-label]');
+      if (orig) orig.textContent = getLang() === 'ru' ? 'ДОБАВЛЕНО' : 'ADDED TO BAG';
       setTimeout(() => {
         btn.removeAttribute('data-added');
-        if (orig) orig.textContent = 'ADD TO BAG';
+        if (orig) orig.textContent = getLang() === 'ru'
+          ? orig.dataset.ru || 'В КОРЗИНУ'
+          : orig.dataset.en || 'ADD TO BAG';
       }, 1600);
+    });
+  });
+}
+
+/* ------------------------------------------------------------------- i18n */
+type Lang = 'en' | 'ru';
+const RUB_RATE = 94; // EUR -> RUB
+function getLang(): Lang {
+  try { return (localStorage.getItem('nor-lang') as Lang) || 'en'; } catch { return 'en'; }
+}
+function fmtPrice(eur: number, lang: Lang): string {
+  if (lang === 'ru') return `${Math.round(eur * RUB_RATE).toLocaleString('ru-RU')} ₽`;
+  return `€${eur}`;
+}
+function applyLang(lang: Lang) {
+  const root = document.documentElement;
+  root.setAttribute('lang', lang);
+  root.setAttribute('data-lang', lang);
+  document.querySelectorAll<HTMLElement>('[data-ru]').forEach((el) => {
+    if (el.dataset.en === undefined) el.dataset.en = (el.textContent || '').trim();
+    el.textContent = lang === 'ru' ? el.dataset.ru || '' : el.dataset.en || '';
+  });
+  document.querySelectorAll<HTMLElement>('[data-price]').forEach((el) => {
+    el.textContent = fmtPrice(parseFloat(el.dataset.price || '0'), lang);
+  });
+  document.querySelectorAll('[data-lang-toggle]').forEach((b) =>
+    b.setAttribute('aria-checked', lang === 'ru' ? 'true' : 'false'));
+}
+function initI18n() {
+  applyLang(getLang());
+  document.querySelectorAll<HTMLElement>('[data-lang-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const next: Lang = getLang() === 'ru' ? 'en' : 'ru';
+      try { localStorage.setItem('nor-lang', next); } catch { /* ignore */ }
+      applyLang(next);
     });
   });
 }
@@ -327,6 +364,7 @@ function setup() {
   document.body.dataset.norReady = '1';
 
   ScrollTrigger.getAll().forEach((t) => t.kill());
+  initI18n();
   initLenis();
   initHeader();
   initMenu();

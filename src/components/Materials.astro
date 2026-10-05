@@ -3,14 +3,14 @@ import Frame from './Frame.astro';
 import SectionLabel from './SectionLabel.astro';
 
 const materials = [
-  { spec: '480 GSM', name: 'HEAVY COTTON', note: 'WEIGHT / STRUCTURE', crop: 'macro', tone: 1 },
-  { spec: '100% WOOL', name: 'STRUCTURED FORM', note: 'DRAPE / HOLD', crop: 'detail', tone: 3 },
-  { spec: 'TECHNICAL', name: 'SHELL MEMBRANE', note: 'WEATHER / MOVEMENT', crop: 'macro', tone: 2 },
+  { spec: '480 GSM', specRu: '480 Г/М²', name: 'HEAVY COTTON', nameRu: 'ПЛОТНЫЙ ХЛОПОК', note: 'WEIGHT / STRUCTURE', noteRu: 'ВЕС / СТРУКТУРА', crop: 'macro', tone: 1 },
+  { spec: '100% WOOL', specRu: '100% ШЕРСТЬ', name: 'STRUCTURED FORM', nameRu: 'СТРУКТУРНАЯ ФОРМА', note: 'DRAPE / HOLD', noteRu: 'ДРАПИРОВКА / ФОРМА', crop: 'detail', tone: 3 },
+  { spec: 'TECHNICAL', specRu: 'ТЕХНИЧЕСКИЙ', name: 'SHELL MEMBRANE', nameRu: 'МЕМБРАНА-ШЕЛЛ', note: 'WEATHER / MOVEMENT', noteRu: 'ПОГОДА / ДВИЖЕНИЕ', crop: 'macro', tone: 2 },
 ];
 ---
 <section class="mat" aria-label="Material and form">
   <div class="shell">
-    <SectionLabel index="03" title="MATERIAL / FORM" meta="SELECTED STUDIES" />
+    <SectionLabel index="03" title="MATERIAL / FORM" titleRu="МАТЕРИАЛ / ФОРМА" meta="SELECTED STUDIES" metaRu="ИЗБРАННЫЕ ЭТЮДЫ" />
     <div class="mat__grid">
       {materials.map((m, i) => (
         <article class="mat__item" data-reveal>
@@ -20,9 +20,9 @@ const materials = [
               metaLeft={`0${i + 1}`} metaRight="MACRO" class="mat__frame" />
           </a>
           <div class="mat__info">
-            <span class="display mat__spec">{m.spec}</span>
-            <span class="mono mat__name">{m.name}</span>
-            <span class="mono muted">{m.note}</span>
+            <span class="display mat__spec" data-ru={m.specRu}>{m.spec}</span>
+            <span class="mono mat__name" data-ru={m.nameRu}>{m.name}</span>
+            <span class="mono muted" data-ru={m.noteRu}>{m.note}</span>
           </div>
         </article>
       ))}

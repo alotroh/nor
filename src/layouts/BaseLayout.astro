@@ -18,6 +18,13 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      try {
+        var l = localStorage.getItem('nor-lang') || 'en';
+        document.documentElement.setAttribute('lang', l);
+        document.documentElement.setAttribute('data-lang', l);
+      } catch (e) {}
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />

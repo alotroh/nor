@@ -1,9 +1,9 @@
 ---
 const nav = [
-  { label: 'COLLECTION', href: '/#collection' },
-  { label: 'EDITORIAL', href: '/#editorial' },
-  { label: 'OBJECTS', href: '/#lookbook' },
-  { label: 'ABOUT', href: '/#about' },
+  { label: 'COLLECTION', ru: 'КОЛЛЕКЦИЯ', href: '/#collection' },
+  { label: 'EDITORIAL', ru: 'КАМПАНИЯ', href: '/#editorial' },
+  { label: 'OBJECTS', ru: 'ОБЪЕКТЫ', href: '/#lookbook' },
+  { label: 'ABOUT', ru: 'О БРЕНДЕ', href: '/#about' },
 ];
 ---
 <header class="hd" data-header>
@@ -12,12 +12,18 @@ const nav = [
 
     <nav class="hd__nav" aria-label="Primary">
       {nav.map((n) => (
-        <a class="link mono" href={n.href}>{n.label}</a>
+        <a class="link mono" href={n.href} data-ru={n.ru}>{n.label}</a>
       ))}
     </nav>
 
     <div class="hd__end">
-      <a class="mono link hd__bag" href="/#collection">BAG (<span data-bag-count>0</span>)</a>
+      <button class="lang" data-lang-toggle role="switch" aria-checked="false"
+        aria-label="Switch language / Сменить язык">
+        <span class="lang__t lang__t--en" aria-hidden="true">EN</span>
+        <span class="lang__track" aria-hidden="true"><span class="lang__knob"></span></span>
+        <span class="lang__t lang__t--ru" aria-hidden="true">RU</span>
+      </button>
+      <a class="mono link hd__bag" href="/#collection"><span data-ru="КОРЗИНА">BAG</span> (<span data-bag-count>0</span>)</a>
       <button class="hd__toggle mono" data-menu-open aria-label="Open menu" aria-expanded="false">
         <span></span><span></span>
       </button>
@@ -29,19 +35,19 @@ const nav = [
 <div class="menu" data-menu hidden>
   <div class="menu__top shell">
     <span class="hd__brand">NØR</span>
-    <button class="mono menu__close" data-menu-close aria-label="Close menu">CLOSE</button>
+    <button class="mono menu__close" data-menu-close aria-label="Close menu" data-ru="ЗАКРЫТЬ">CLOSE</button>
   </div>
   <nav class="menu__nav shell" aria-label="Mobile">
     {nav.map((n, i) => (
       <a class="menu__link" href={n.href} data-menu-link>
         <span class="mono menu__idx">{String(i + 1).padStart(2, '0')}</span>
-        <span class="display">{n.label}</span>
+        <span class="display" data-ru={n.ru}>{n.label}</span>
       </a>
     ))}
   </nav>
   <div class="menu__foot shell mono muted">
     <span>NØR / 2026</span>
-    <span>AUTUMN — WINTER</span>
+    <span data-ru="ОСЕНЬ — ЗИМА">AUTUMN — WINTER</span>
   </div>
 </div>
 
@@ -88,6 +94,44 @@ const nav = [
     gap: 1.25rem;
     justify-self: end;
   }
+
+  /* Language slider */
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    color: currentColor;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    line-height: 1;
+  }
+  .lang__t { opacity: 0.4; transition: opacity 0.3s var(--ease); }
+  :root[data-lang='en'] .lang__t--en { opacity: 1; }
+  :root[data-lang='ru'] .lang__t--ru { opacity: 1; }
+  .lang__track {
+    position: relative;
+    width: 32px;
+    height: 16px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+  .lang__knob {
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translateY(-50%);
+    transition: left 0.3s var(--ease);
+  }
+  :root[data-lang='ru'] .lang__knob { left: calc(100% - 12px); }
+  .lang:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
   .hd__toggle {
     display: none;
     flex-direction: column;

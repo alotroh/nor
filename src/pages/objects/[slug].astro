@@ -29,7 +29,7 @@ const total = String(products.length).padStart(2, '0');
   <Cursor />
   <main id="main" class="pdp">
     <nav class="pdp__crumbs shell mono" aria-label="Breadcrumb">
-      <a class="link" href="/#collection">← COLLECTION</a>
+      <a class="link" href="/#collection" data-ru="← КОЛЛЕКЦИЯ">← COLLECTION</a>
       <span class="muted">{num} / {total}</span>
     </nav>
 
@@ -45,8 +45,8 @@ const total = String(products.length).padStart(2, '0');
     </div>
 
     <a class="pdp__next shell" href={`/objects/${next.slug}`} aria-label={`Next object: ${next.name}`}>
-      <span class="mono muted">NEXT OBJECT</span>
-      <span class="display pdp__next-name">{next.name}</span>
+      <span class="mono muted" data-ru="СЛЕДУЮЩИЙ ОБЪЕКТ">NEXT OBJECT</span>
+      <span class="display pdp__next-name" data-ru={next.nameRu}>{next.name}</span>
       <span class="mono pdp__next-go">{next.object} →</span>
     </a>
   </main>

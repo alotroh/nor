@@ -6,8 +6,8 @@ const total = String(products.length).padStart(2, '0');
 ---
 <section class="col" id="collection" aria-label="Collection 01">
   <div class="shell">
-    <SectionLabel index="02" title="COLLECTION 01" meta={collectionMeta.season} />
-    <h2 class="display col__title" data-reveal>THE OBJECTS</h2>
+    <SectionLabel index="02" title="COLLECTION 01" titleRu="КОЛЛЕКЦИЯ 01" meta={collectionMeta.season} metaRu="ОСЕНЬ / ЗИМА 2026" />
+    <h2 class="display col__title" data-reveal data-ru="ОБЪЕКТЫ">THE OBJECTS</h2>
   </div>
 
   <div class="col__browser shell" data-browser aria-roledescription="carousel">
@@ -23,7 +23,7 @@ const total = String(products.length).padStart(2, '0');
         <article class="slide" data-slide data-index={i} aria-hidden={i !== 0 ? 'true' : 'false'}>
           <div class="slide__meta">
             <span class="mono muted">{p.object}</span>
-            <span class="mono muted slide__cat">{p.category}</span>
+            <span class="mono muted slide__cat" data-ru={p.categoryRu}>{p.category}</span>
           </div>
 
           <a class="slide__media mask" href={`/objects/${p.slug}`} data-slide-media aria-label={`View ${p.name}`}>
@@ -31,16 +31,16 @@ const total = String(products.length).padStart(2, '0');
               src={p.images[0].src} alt={p.images[0].alt}
               priority={i === 0}
               metaLeft={`NØR / ${p.id}`} metaRight={collectionMeta.seasonShort} />
-            <span class="slide__view mono" data-cursor-hint>VIEW OBJECT →</span>
+            <span class="slide__view mono" data-cursor-hint data-ru="СМОТРЕТЬ →">VIEW OBJECT →</span>
           </a>
 
           <div class="slide__info">
-            <h3 class="display slide__name">{p.name}</h3>
+            <h3 class="display slide__name" data-ru={p.nameRu}>{p.name}</h3>
             <div class="slide__rows mono">
-              <span class="slide__price">€{p.price}</span>
-              <span class="muted">{p.color}</span>
+              <span class="slide__price" data-price={p.price}>€{p.price}</span>
+              <span class="muted" data-ru={p.colorRu}>{p.color}</span>
             </div>
-            <a class="link mono slide__cta" href={`/objects/${p.slug}`}>VIEW OBJECT →</a>
+            <a class="link mono slide__cta" href={`/objects/${p.slug}`} data-ru="СМОТРЕТЬ →">VIEW OBJECT →</a>
           </div>
         </article>
       ))}

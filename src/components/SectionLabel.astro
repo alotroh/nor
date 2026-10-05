@@ -1,13 +1,13 @@
 ---
-interface Props { index?: string; title: string; meta?: string; light?: boolean; }
-const { index, title, meta, light = false } = Astro.props;
+interface Props { index?: string; title: string; titleRu?: string; meta?: string; metaRu?: string; light?: boolean; }
+const { index, title, titleRu, meta, metaRu, light = false } = Astro.props;
 ---
 <div class={`sl ${light ? 'sl--light' : ''}`}>
   <span class="mono sl__l">
     {index && <span class="sl__idx">{index}</span>}
-    <span>{title}</span>
+    <span data-ru={titleRu}>{title}</span>
   </span>
-  {meta && <span class="mono muted">{meta}</span>}
+  {meta && <span class="mono muted" data-ru={metaRu}>{meta}</span>}
 </div>
 
 <style>

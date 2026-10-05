@@ -12,7 +12,7 @@ const layout = [
 ---
 <section class="lb" id="lookbook" aria-label="Lookbook">
   <div class="shell">
-    <SectionLabel index="04" title="LOOKBOOK / 01" meta="12 LOOKS" />
+    <SectionLabel index="04" title="LOOKBOOK / 01" titleRu="ЛУКБУК / 01" meta="12 LOOKS" metaRu="12 ЛУКОВ" />
   </div>
 
   <div class="lb__grid shell">
@@ -32,7 +32,7 @@ const layout = [
           </span>
           <span class="lb__cap mono">
             <span>{look.n} / 12</span>
-            <span class="muted">{look.title}</span>
+            <span class="muted" data-ru={look.titleRu}>{look.title}</span>
           </span>
         </button>
       );
@@ -44,15 +44,15 @@ const layout = [
 <div class="lbx" data-lbx hidden aria-modal="true" role="dialog" aria-label="Lookbook viewer">
   <div class="lbx__top shell">
     <span class="mono"><span data-lbx-n>01</span> / 12</span>
-    <button class="mono lbx__close" data-lbx-close>CLOSE ✕</button>
+    <button class="mono lbx__close" data-lbx-close data-ru="ЗАКРЫТЬ ✕">CLOSE ✕</button>
   </div>
   <div class="lbx__stage">
     <div class="lbx__frame mask" data-lbx-frame></div>
   </div>
   <div class="lbx__nav shell">
-    <button class="mono link" data-lbx-prev>← PREV</button>
+    <button class="mono link" data-lbx-prev data-ru="← НАЗАД">← PREV</button>
     <span class="mono muted" data-lbx-title></span>
-    <button class="mono link" data-lbx-next>NEXT →</button>
+    <button class="mono link" data-lbx-next data-ru="ВПЕРЁД →">NEXT →</button>
   </div>
 </div>
 

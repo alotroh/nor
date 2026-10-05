@@ -6,17 +6,17 @@ const { product } = Astro.props;
 <div class="pinfo">
   <div class="pinfo__head">
     <span class="mono muted">{product.object}</span>
-    <h1 class="display pinfo__name">{product.name}</h1>
-    <p class="mono pinfo__price">€{product.price}</p>
+    <h1 class="display pinfo__name" data-ru={product.nameRu}>{product.name}</h1>
+    <p class="mono pinfo__price" data-price={product.price}>€{product.price}</p>
   </div>
 
   <dl class="pinfo__opt">
     <div class="pinfo__row">
-      <dt class="mono muted">COLOR</dt>
-      <dd class="mono">{product.color}</dd>
+      <dt class="mono muted" data-ru="ЦВЕТ">COLOR</dt>
+      <dd class="mono" data-ru={product.colorRu}>{product.color}</dd>
     </div>
     <div class="pinfo__row pinfo__row--sizes">
-      <dt class="mono muted">SIZE</dt>
+      <dt class="mono muted" data-ru="РАЗМЕР">SIZE</dt>
       <dd class="pinfo__sizes" role="radiogroup" aria-label="Select size">
         {product.sizes.map((s, i) => (
           <button class="pinfo__size mono" data-size role="radio"
@@ -27,19 +27,19 @@ const { product } = Astro.props;
   </dl>
 
   <button class="btn pinfo__add" data-add-bag>
-    <span data-add-label>ADD TO BAG</span>
+    <span data-add-label data-ru="В КОРЗИНУ">ADD TO BAG</span>
     <span aria-hidden="true">→</span>
   </button>
 
   <div class="pinfo__section">
-    <h2 class="mono muted pinfo__lbl">DESCRIPTION</h2>
-    <p class="pinfo__text">{product.description}</p>
+    <h2 class="mono muted pinfo__lbl" data-ru="ОПИСАНИЕ">DESCRIPTION</h2>
+    <p class="pinfo__text" data-ru={product.descriptionRu}>{product.description}</p>
   </div>
 
   <div class="pinfo__section">
-    <h2 class="mono muted pinfo__lbl">DETAILS</h2>
+    <h2 class="mono muted pinfo__lbl" data-ru="ХАРАКТЕРИСТИКИ">DETAILS</h2>
     <ul class="pinfo__details mono">
-      {product.details.map((d) => <li>{d}</li>)}
+      {product.details.map((d, i) => <li data-ru={product.detailsRu[i]}>{d}</li>)}
     </ul>
   </div>
 </div>
