@@ -139,7 +139,7 @@ export const products: Product[] = [
     details: ['TECHNICAL SHELL', 'SEALED SEAMS', 'ARTICULATED SLEEVE', 'STORM PLACKET'],
     detailsRu: ['ТЕХНИЧЕСКИЙ ШЕЛЛ', 'ГЕРМЕТИЧНЫЕ ШВЫ', 'АРТИКУЛ. РУКАВ', 'ШТОРМОВАЯ ПЛАНКА'],
     images: [
-      { alt: 'Technical shell jacket, full front view', crop: 'full', tone: 2 },
+      { src: '/img/object-004-1.jpg', alt: 'Technical shell jacket, full front view', crop: 'full', tone: 2 },
       { alt: 'Storm placket and zipper detail', crop: 'detail', tone: 1 },
       { alt: 'Technical membrane surface, macro study', crop: 'macro', tone: 1 },
       { alt: 'Technical shell jacket, side profile in motion', crop: 'profile', tone: 2 },
@@ -164,7 +164,7 @@ export const products: Product[] = [
     details: ['WOOL / ALPACA', 'HEAVY GAUGE', 'STAND COLLAR', 'STRUCTURED FORM'],
     detailsRu: ['ШЕРСТЬ / АЛЬПАКА', 'КРУПНАЯ ВЯЗКА', 'ВОРОТНИК-СТОЙКА', 'СТРУКТУРНАЯ ФОРМА'],
     images: [
-      { alt: 'Structured knit, three-quarter studio view', crop: 'full', tone: 4 },
+      { src: '/img/object-005-1.jpg', alt: 'Structured knit, three-quarter studio view', crop: 'full', tone: 4 },
       { alt: 'Stand collar and rib construction detail', crop: 'detail', tone: 3 },
       { alt: 'Heavy-gauge knit texture, macro study', crop: 'macro', tone: 4 },
       { alt: 'Structured knit, profile silhouette', crop: 'profile', tone: 4 },
