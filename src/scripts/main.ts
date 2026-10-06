@@ -86,29 +86,262 @@ function initMenu() {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.hasAttribute('data-open')) close(); });
 }
 
-/* -------------------------------------------------------------------- Bag */
-function readBag(): number { return parseInt(localStorage.getItem('nor-bag') || '0', 10) || 0; }
-function paintBag() {
-  const n = readBag();
-  document.querySelectorAll('[data-bag-count]').forEach((el) => (el.textContent = String(n)));
+/* ------------------------------------------------------------- Size picker */
+function initSizes() {
+  document.querySelectorAll<HTMLElement>('[role="radiogroup"] [data-size]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('[role="radiogroup"]');
+      group?.querySelectorAll('[data-size]').forEach((b) => {
+        b.removeAttribute('data-active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.setAttribute('data-active', '');
+      btn.setAttribute('aria-checked', 'true');
+    });
+  });
 }
-function initBag() {
-  paintBag();
+
+/* ------------------------------------------------------------------- Cart */
+interface CatalogItem {
+  id: string; object: string; slug: string; name: string; nameRu: string;
+  price: number; sizes: string[]; img: string | null; rec: string[];
+}
+interface CartLine { id: string; size: string; qty: number; }
+
+let CATALOG: Record<string, CatalogItem> = {};
+function loadCatalog() {
+  if (Object.keys(CATALOG).length) return;
+  const el = document.querySelector('[data-cart-catalog]');
+  if (!el) return;
+  try {
+    const arr = JSON.parse(el.textContent || '[]') as CatalogItem[];
+    CATALOG = Object.fromEntries(arr.map((c) => [c.id, c]));
+  } catch { /* ignore */ }
+}
+function readCart(): CartLine[] {
+  try { return JSON.parse(localStorage.getItem('nor-cart') || '[]') as CartLine[]; } catch { return []; }
+}
+function writeCart(lines: CartLine[]) {
+  try { localStorage.setItem('nor-cart', JSON.stringify(lines)); } catch { /* ignore */ }
+}
+function cartCount(lines = readCart()): number { return lines.reduce((n, l) => n + l.qty, 0); }
+function cartTotalEUR(lines = readCart()): number {
+  return lines.reduce((s, l) => s + (CATALOG[l.id]?.price || 0) * l.qty, 0);
+}
+function defaultSize(id: string): string {
+  const s = CATALOG[id]?.sizes || [];
+  return s[Math.floor(s.length / 2)] || s[0] || '';
+}
+function mergeLines(lines: CartLine[]): CartLine[] {
+  const out: CartLine[] = [];
+  for (const l of lines) {
+    const m = out.find((x) => x.id === l.id && x.size === l.size);
+    if (m) m.qty += l.qty; else out.push({ ...l });
+  }
+  return out;
+}
+function addToCart(id: string, size?: string, qty = 1) {
+  const lines = readCart();
+  lines.push({ id, size: size || defaultSize(id), qty });
+  writeCart(mergeLines(lines));
+  renderCart();
+}
+function changeQty(idx: number, delta: number) {
+  const lines = readCart();
+  if (!lines[idx]) return;
+  lines[idx].qty += delta;
+  if (lines[idx].qty < 1) lines.splice(idx, 1);
+  writeCart(lines);
+  renderCart();
+}
+function changeSize(idx: number, size: string) {
+  const lines = readCart();
+  if (!lines[idx]) return;
+  lines[idx].size = size;
+  writeCart(mergeLines(lines));
+  renderCart();
+}
+function removeLine(idx: number) {
+  const lines = readCart();
+  lines.splice(idx, 1);
+  writeCart(lines);
+  renderCart();
+}
+function pName(c: CatalogItem, lang: Lang) { return lang === 'ru' ? c.nameRu : c.name; }
+
+function renderCart() {
+  loadCatalog();
+  const lang = getLang();
+  const lines = readCart();
+
+  const n = cartCount(lines);
+  document.querySelectorAll('[data-bag-count]').forEach((el) => (el.textContent = String(n)));
+  const totalTxt = fmtPrice(cartTotalEUR(lines), lang);
+  document.querySelectorAll('[data-cart-total]').forEach((el) => (el.textContent = totalTxt));
+
+  const empty = document.querySelector<HTMLElement>('[data-cart-empty]');
+  if (empty) empty.hidden = lines.length > 0;
+  const checkoutBtn = document.querySelector<HTMLButtonElement>('[data-cart-to-checkout]');
+  if (checkoutBtn) checkoutBtn.disabled = lines.length === 0;
+
+  const list = document.querySelector<HTMLElement>('[data-cart-items]');
+  if (list) {
+    list.innerHTML = lines.map((l, i) => {
+      const c = CATALOG[l.id];
+      if (!c) return '';
+      const thumb = c.img
+        ? `<span class="cart__thumb"><img src="${c.img}" alt=""></span>`
+        : '<span class="cart__thumb"><span class="cart__thumb-ph"></span></span>';
+      const opts = c.sizes.map((s) =>
+        `<option value="${s}"${s === l.size ? ' selected' : ''}>${s}</option>`).join('');
+      return `<li class="cart__item">
+        ${thumb}
+        <div class="cart__it-main">
+          <span class="cart__it-name">${pName(c, lang)}</span>
+          <div class="cart__it-row">
+            <select class="cart__size" data-cart-size="${i}" aria-label="Size">${opts}</select>
+            <span class="cart__qty">
+              <button type="button" data-cart-dec="${i}" aria-label="minus">−</button>
+              <span>${l.qty}</span>
+              <button type="button" data-cart-inc="${i}" aria-label="plus">+</button>
+            </span>
+          </div>
+        </div>
+        <div class="cart__it-end">
+          <span class="cart__it-price">${fmtPrice(c.price * l.qty, lang)}</span>
+          <button type="button" class="cart__rm" data-cart-rm="${i}" data-ru="УДАЛИТЬ">REMOVE</button>
+        </div>
+      </li>`;
+    }).join('');
+  }
+
+  const recWrap = document.querySelector<HTMLElement>('[data-cart-recs]');
+  const recList = document.querySelector<HTMLElement>('[data-cart-recs-list]');
+  if (recWrap && recList) {
+    const inCart = new Set(lines.map((l) => l.id));
+    const recIds: string[] = [];
+    for (const l of lines) {
+      for (const r of CATALOG[l.id]?.rec || []) {
+        if (!inCart.has(r) && !recIds.includes(r)) recIds.push(r);
+      }
+    }
+    const top = recIds.slice(0, 3);
+    recWrap.hidden = top.length === 0;
+    recList.innerHTML = top.map((id) => {
+      const c = CATALOG[id];
+      if (!c) return '';
+      const thumb = c.img
+        ? `<span class="cart__rec-thumb"><img src="${c.img}" alt=""></span>`
+        : '<span class="cart__rec-thumb"><span class="cart__rec-thumb-ph"></span></span>';
+      return `<li class="cart__rec">
+        ${thumb}
+        <div class="cart__rec-main">
+          <span class="cart__rec-name">${pName(c, lang)}</span>
+          <span class="cart__rec-price">${fmtPrice(c.price, lang)}</span>
+        </div>
+        <button type="button" class="cart__rec-add" data-cart-recadd="${id}" data-ru="ДОБАВИТЬ">ADD</button>
+      </li>`;
+    }).join('');
+  }
+
+  // localize freshly built rows (no event dispatch — avoids render loop)
+  const cartEl = document.querySelector<HTMLElement>('[data-cart]');
+  if (cartEl) localize(cartEl, lang);
+}
+
+function initCart() {
+  loadCatalog();
+  const cart = document.querySelector<HTMLElement>('[data-cart]');
+  if (!cart) return;
+  const lenis = g.__nor!.lenis;
+  const views = [...cart.querySelectorAll<HTMLElement>('[data-cart-view]')];
+  const showView = (name: string) =>
+    views.forEach((v) => (v.hidden = v.getAttribute('data-cart-view') !== name));
+
+  const open = () => {
+    renderCart();
+    showView('bag');
+    cart.hidden = false;
+    requestAnimationFrame(() => cart.setAttribute('data-open', ''));
+    lenis?.stop();
+  };
+  const close = () => {
+    cart.removeAttribute('data-open');
+    lenis?.start();
+    setTimeout(() => { cart.hidden = true; showView('bag'); }, 500);
+  };
+
+  document.querySelectorAll('[data-cart-open]').forEach((b) => b.addEventListener('click', open));
+  cart.querySelectorAll('[data-cart-close]').forEach((b) => b.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cart.hasAttribute('data-open')) close();
+  });
+
+  cart.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const inc = t.closest<HTMLElement>('[data-cart-inc]');
+    const dec = t.closest<HTMLElement>('[data-cart-dec]');
+    const rm = t.closest<HTMLElement>('[data-cart-rm]');
+    const recadd = t.closest<HTMLElement>('[data-cart-recadd]');
+    if (inc) changeQty(Number(inc.dataset.cartInc), 1);
+    else if (dec) changeQty(Number(dec.dataset.cartDec), -1);
+    else if (rm) removeLine(Number(rm.dataset.cartRm));
+    else if (recadd) addToCart(recadd.dataset.cartRecadd!);
+  });
+  cart.addEventListener('change', (e) => {
+    const sel = (e.target as HTMLElement).closest<HTMLSelectElement>('[data-cart-size]');
+    if (sel) changeSize(Number(sel.dataset.cartSize), sel.value);
+  });
+
+  cart.querySelector('[data-cart-to-checkout]')?.addEventListener('click', () => {
+    if (readCart().length) showView('checkout');
+  });
+  cart.querySelector('[data-cart-to-bag]')?.addEventListener('click', () => showView('bag'));
+
+  const form = cart.querySelector<HTMLFormElement>('form[data-cart-view="checkout"]');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let ok = true;
+    form.querySelectorAll<HTMLElement>('.cart__field').forEach((f) => {
+      const inp = f.querySelector<HTMLInputElement>('[data-cart-field]');
+      const bad = !inp || !inp.value.trim();
+      f.toggleAttribute('data-invalid', bad);
+      if (bad) ok = false;
+    });
+    const consent = form.querySelector<HTMLInputElement>('[data-cart-consent]');
+    const consentBad = !consent?.checked;
+    consent?.closest<HTMLElement>('.cart__consent')?.toggleAttribute('data-invalid', consentBad);
+    if (consentBad) ok = false;
+    if (!ok) return;
+    writeCart([]);
+    renderCart();
+    showView('done');
+    form.reset();
+    form.querySelectorAll('[data-invalid]').forEach((el) => el.removeAttribute('data-invalid'));
+  });
+
+  // add-to-bag from product pages
   document.querySelectorAll<HTMLButtonElement>('[data-add-bag]').forEach((btn) => {
     btn.addEventListener('click', () => {
-      localStorage.setItem('nor-bag', String(readBag() + 1));
-      paintBag();
-      btn.setAttribute('data-added', '');
+      const id = btn.dataset.productId;
+      if (!id) return;
+      const sizeBtn = document.querySelector<HTMLElement>('[data-size][data-active]');
+      addToCart(id, sizeBtn?.textContent?.trim() || undefined);
       const orig = btn.querySelector<HTMLElement>('[data-add-label]');
-      if (orig) orig.textContent = getLang() === 'ru' ? 'ДОБАВЛЕНО' : 'ADDED TO BAG';
+      btn.setAttribute('data-added', '');
+      if (orig) orig.textContent = getLang() === 'ru' ? 'ДОБАВЛЕНО' : 'ADDED';
       setTimeout(() => {
         btn.removeAttribute('data-added');
         if (orig) orig.textContent = getLang() === 'ru'
           ? orig.dataset.ru || 'В КОРЗИНУ'
           : orig.dataset.en || 'ADD TO BAG';
-      }, 1600);
+      }, 1400);
+      open();
     });
   });
+
+  document.addEventListener('nor:lang', () => renderCart());
+  renderCart();
 }
 
 /* ------------------------------------------------------------------- i18n */
@@ -121,19 +354,23 @@ function fmtPrice(eur: number, lang: Lang): string {
   if (lang === 'ru') return `${Math.round(eur * RUB_RATE).toLocaleString('ru-RU')} ₽`;
   return `€${eur}`;
 }
+function localize(root: ParentNode, lang: Lang) {
+  root.querySelectorAll<HTMLElement>('[data-ru]').forEach((el) => {
+    if (el.dataset.en === undefined) el.dataset.en = (el.textContent || '').trim();
+    el.textContent = lang === 'ru' ? el.dataset.ru || '' : el.dataset.en || '';
+  });
+  root.querySelectorAll<HTMLElement>('[data-price]').forEach((el) => {
+    el.textContent = fmtPrice(parseFloat(el.dataset.price || '0'), lang);
+  });
+}
 function applyLang(lang: Lang) {
   const root = document.documentElement;
   root.setAttribute('lang', lang);
   root.setAttribute('data-lang', lang);
-  document.querySelectorAll<HTMLElement>('[data-ru]').forEach((el) => {
-    if (el.dataset.en === undefined) el.dataset.en = (el.textContent || '').trim();
-    el.textContent = lang === 'ru' ? el.dataset.ru || '' : el.dataset.en || '';
-  });
-  document.querySelectorAll<HTMLElement>('[data-price]').forEach((el) => {
-    el.textContent = fmtPrice(parseFloat(el.dataset.price || '0'), lang);
-  });
+  localize(document, lang);
   document.querySelectorAll('[data-lang-toggle]').forEach((b) =>
     b.setAttribute('aria-checked', lang === 'ru' ? 'true' : 'false'));
+  document.dispatchEvent(new CustomEvent('nor:lang', { detail: lang }));
 }
 function initI18n() {
   applyLang(getLang());
@@ -369,7 +606,8 @@ function setup() {
   initHeader();
   initMenu();
   initCursor();
-  initBag();
+  initSizes();
+  initCart();
   initAnchors();
   initHero();
   initReveals();

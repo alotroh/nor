@@ -1,6 +1,7 @@
 ---
 import '@/styles/global.css';
 import { ViewTransitions } from 'astro:transitions';
+import Cart from '@/components/Cart.astro';
 
 interface Props {
   title?: string;
@@ -54,6 +55,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <body data-theme={theme}>
     <a href="#main" class="skip">Skip to content</a>
     <slot />
+    <Cart />
     <style>
       .skip {
         position: fixed;

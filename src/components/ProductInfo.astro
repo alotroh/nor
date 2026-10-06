@@ -26,7 +26,7 @@ const { product } = Astro.props;
     </div>
   </dl>
 
-  <button class="btn pinfo__add" data-add-bag>
+  <button class="btn pinfo__add" data-add-bag data-product-id={product.id}>
     <span data-add-label data-ru="В КОРЗИНУ">ADD TO BAG</span>
     <span aria-hidden="true">→</span>
   </button>

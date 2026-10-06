@@ -1,0 +1,258 @@
+---
+// Slide-out bag + checkout. Rendered once in BaseLayout so it exists on every
+// page. All dynamic rows are built by initCart() in main.ts, which reads the
+// catalog embedded below. Outfit-logic recommendations via `rec`.
+import { products } from '@/data/products';
+
+const recMap: Record<string, string[]> = {
+  '001': ['003', '006'],
+  '002': ['003', '006'],
+  '003': ['005', '006'],
+  '004': ['003', '006'],
+  '005': ['003', '001'],
+  '006': ['003', '001'],
+};
+
+const catalog = products.map((p) => ({
+  id: p.id,
+  object: p.object,
+  slug: p.slug,
+  name: p.name,
+  nameRu: p.nameRu,
+  price: p.price,
+  sizes: p.sizes,
+  img: p.images[0].src ?? null,
+  rec: recMap[p.id] ?? [],
+}));
+---
+<div class="cart" data-cart hidden>
+  <div class="cart__scrim" data-cart-close aria-hidden="true"></div>
+  <aside class="cart__panel" role="dialog" aria-modal="true" aria-label="Bag">
+    <header class="cart__top">
+      <span class="cart__title mono"><span data-ru="КОРЗИНА">BAG</span> (<span data-bag-count>0</span>)</span>
+      <button class="mono cart__close" data-cart-close data-ru="ЗАКРЫТЬ ✕">CLOSE ✕</button>
+    </header>
+
+    <!-- STEP 1 — bag -->
+    <div class="cart__view" data-cart-view="bag">
+      <div class="cart__scroll">
+        <p class="cart__empty mono muted" data-cart-empty hidden data-ru="Корзина пуста">YOUR BAG IS EMPTY</p>
+        <ul class="cart__items" data-cart-items></ul>
+
+        <section class="cart__recs" data-cart-recs hidden>
+          <h3 class="mono muted cart__recs-ttl" data-ru="ДОБАВИТЬ К ЗАКАЗУ">COMPLETE THE LOOK</h3>
+          <ul class="cart__recs-list" data-cart-recs-list></ul>
+        </section>
+      </div>
+
+      <div class="cart__foot">
+        <div class="cart__total mono">
+          <span data-ru="ИТОГО">TOTAL</span>
+          <span data-cart-total>—</span>
+        </div>
+        <button class="btn cart__cta" data-cart-to-checkout>
+          <span data-ru="ОФОРМИТЬ ЗАКАЗ">CHECKOUT</span><span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2 — checkout -->
+    <form class="cart__view cart__form" data-cart-view="checkout" hidden novalidate>
+      <button type="button" class="mono cart__back" data-cart-to-bag data-ru="← НАЗАД В КОРЗИНУ">← BACK TO BAG</button>
+
+      <div class="cart__scroll">
+        <div class="cart__field">
+          <label class="mono muted" for="cf-name" data-ru="ФИО">FULL NAME</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" data-cart-field required />
+        </div>
+        <div class="cart__field">
+          <label class="mono muted" for="cf-phone" data-ru="ТЕЛЕФОН">PHONE</label>
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" data-cart-field required />
+        </div>
+        <div class="cart__field">
+          <label class="mono muted" for="cf-city" data-ru="ГОРОД">CITY</label>
+          <input id="cf-city" name="city" type="text" autocomplete="address-level2" data-cart-field required />
+        </div>
+        <div class="cart__field">
+          <label class="mono muted" for="cf-cdek" data-ru="ОТДЕЛЕНИЕ СДЭК (АДРЕС / № ПВЗ)">CDEK PICKUP POINT (ADDRESS / NO.)</label>
+          <input id="cf-cdek" name="cdek" type="text" data-cart-field required />
+          <a class="mono cart__cdek-link" href="https://www.cdek.ru/ru/offices/" target="_blank" rel="noopener noreferrer"
+            data-ru="Найти ближайший ПВЗ на карте СДЭК ↗">Find your nearest CDEK point on the map ↗</a>
+        </div>
+
+        <label class="cart__consent mono">
+          <input type="checkbox" name="consent" data-cart-consent required />
+          <span data-ru="Я согласен на обработку персональных данных">I consent to the processing of my personal data</span>
+        </label>
+      </div>
+
+      <div class="cart__foot">
+        <div class="cart__total mono">
+          <span data-ru="ИТОГО">TOTAL</span>
+          <span data-cart-total>—</span>
+        </div>
+        <button type="submit" class="btn cart__cta" data-cart-submit>
+          <span data-ru="ПОДТВЕРДИТЬ ЗАКАЗ">PLACE ORDER</span><span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- STEP 3 — done -->
+    <div class="cart__view cart__done" data-cart-view="done" hidden>
+      <div class="cart__done-in">
+        <span class="cart__done-mark" aria-hidden="true">✓</span>
+        <p class="display cart__done-ttl" data-ru="Отлично! Заявка на покупку отправлена">GREAT — YOUR REQUEST HAS BEEN SENT</p>
+        <p class="mono muted cart__done-sub" data-ru="Мы свяжемся с вами для подтверждения.">We'll contact you to confirm the order.</p>
+        <button class="btn btn--dark cart__done-btn" data-cart-close>
+          <span data-ru="ПРОДОЛЖИТЬ">CONTINUE</span><span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script type="application/json" data-cart-catalog set:html={JSON.stringify(catalog)}></script>
+
+<style is:global>
+  .cart { position: fixed; inset: 0; z-index: 300; }
+  .cart[hidden] { display: none; }
+  .cart__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 4, 4, 0.6);
+    backdrop-filter: blur(3px);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
+  .cart[data-open] .cart__scrim { opacity: 1; }
+
+  .cart__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(460px, 100%);
+    background: var(--black);
+    color: var(--white);
+    border-left: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.5s var(--ease);
+    will-change: transform;
+  }
+  .cart[data-open] .cart__panel { transform: none; }
+
+  .cart__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem clamp(1.25rem, 3vw, 2rem);
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .cart__title { letter-spacing: 0.12em; font-size: 0.85rem; }
+  .cart__close { letter-spacing: 0.1em; font-size: 0.72rem; }
+  .cart__close:hover { opacity: 0.6; }
+
+  .cart__view { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+  .cart__view[hidden] { display: none; }
+  .cart__scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .cart__empty { padding: 3rem 0; text-align: center; letter-spacing: 0.1em; }
+
+  .cart__items { display: flex; flex-direction: column; gap: 1.25rem; list-style: none; margin: 0; padding: 0; }
+  .cart__item { display: grid; grid-template-columns: 64px 1fr auto; gap: 1rem; align-items: start; }
+  .cart__thumb {
+    width: 64px; height: 80px; background: var(--black-2);
+    overflow: hidden; flex-shrink: 0;
+  }
+  .cart__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .cart__thumb-ph { width: 100%; height: 100%; display: grid; place-items: center; }
+  .cart__thumb-ph::before { content: 'NØR'; font-family: var(--mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 0.1em; }
+
+  .cart__it-main { display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; }
+  .cart__it-name { font-size: 0.82rem; letter-spacing: 0.04em; font-weight: 500; }
+  .cart__it-row { display: flex; align-items: center; gap: 0.75rem; }
+  .cart__size {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
+    background: transparent; color: var(--white);
+    border: 1px solid var(--line); padding: 0.3rem 0.4rem;
+  }
+  .cart__size option { background: var(--black); color: var(--white); }
+  .cart__qty { display: inline-flex; align-items: center; border: 1px solid var(--line); }
+  .cart__qty button {
+    width: 28px; height: 28px; font-family: var(--mono); color: var(--white);
+    display: grid; place-items: center; font-size: 0.9rem;
+  }
+  .cart__qty button:hover { background: var(--white); color: var(--black); }
+  .cart__qty span { min-width: 24px; text-align: center; font-family: var(--mono); font-size: 0.72rem; }
+
+  .cart__it-end { display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; }
+  .cart__it-price { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; white-space: nowrap; }
+  .cart__rm { font-family: var(--mono); font-size: 0.62rem; color: var(--gray); letter-spacing: 0.08em; }
+  .cart__rm:hover { color: var(--white); }
+
+  .cart__recs { border-top: 1px solid var(--line); padding-top: 1.5rem; }
+  .cart__recs-ttl { font-size: 0.66rem; letter-spacing: 0.16em; margin-bottom: 1rem; }
+  .cart__recs-list { display: flex; flex-direction: column; gap: 0.9rem; list-style: none; margin: 0; padding: 0; }
+  .cart__rec { display: grid; grid-template-columns: 48px 1fr auto; gap: 0.9rem; align-items: center; }
+  .cart__rec-thumb { width: 48px; height: 60px; background: var(--black-2); overflow: hidden; }
+  .cart__rec-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .cart__rec-thumb-ph { width: 100%; height: 100%; display: grid; place-items: center; }
+  .cart__rec-thumb-ph::before { content: 'NØR'; font-family: var(--mono); font-size: 0.5rem; color: var(--gray); }
+  .cart__rec-main { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
+  .cart__rec-name { font-size: 0.72rem; letter-spacing: 0.03em; }
+  .cart__rec-price { font-family: var(--mono); font-size: 0.66rem; color: var(--gray); }
+  .cart__rec-add {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.08em;
+    border: 1px solid var(--line); padding: 0.45rem 0.6rem; white-space: nowrap;
+  }
+  .cart__rec-add:hover { background: var(--white); color: var(--black); }
+
+  .cart__foot { border-top: 1px solid var(--line); padding: clamp(1.25rem, 3vw, 1.75rem); flex-shrink: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .cart__total { display: flex; justify-content: space-between; align-items: baseline; letter-spacing: 0.1em; font-size: 0.8rem; }
+  .cart__total [data-cart-total] { font-size: 1rem; }
+  .cart__cta { justify-content: space-between; }
+  .cart__cta[disabled] { opacity: 0.4; pointer-events: none; }
+
+  /* form */
+  .cart__back { align-self: flex-start; padding: 1.1rem clamp(1.25rem, 3vw, 2rem) 0; letter-spacing: 0.1em; font-size: 0.7rem; }
+  .cart__back:hover { opacity: 0.6; }
+  .cart__field { display: flex; flex-direction: column; gap: 0.5rem; }
+  .cart__field label { font-size: 0.64rem; letter-spacing: 0.12em; }
+  .cart__field input {
+    font-family: var(--mono); font-size: 0.85rem; color: var(--white);
+    background: transparent; border: none; border-bottom: 1px solid var(--line);
+    padding: 0.55rem 0; transition: border-color 0.3s var(--ease);
+  }
+  .cart__field input:focus { outline: none; border-bottom-color: var(--white); }
+  .cart__field[data-invalid] input { border-bottom-color: #c25a4b; }
+  .cart__cdek-link { font-size: 0.66rem; color: var(--gray); letter-spacing: 0.04em; margin-top: 0.15rem; }
+  .cart__cdek-link:hover { color: var(--white); }
+
+  .cart__consent { display: flex; gap: 0.7rem; align-items: flex-start; font-size: 0.72rem; line-height: 1.4; cursor: pointer; letter-spacing: 0.02em; }
+  .cart__consent input { margin-top: 0.15rem; accent-color: var(--white); width: 15px; height: 15px; flex-shrink: 0; }
+  .cart__consent[data-invalid] span { color: #c25a4b; }
+
+  /* done */
+  .cart__done { align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+  .cart__done-in { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; max-width: 320px; }
+  .cart__done-mark {
+    width: 54px; height: 54px; border: 1px solid var(--white); border-radius: 50%;
+    display: grid; place-items: center; font-size: 1.3rem;
+  }
+  .cart__done-ttl { font-size: clamp(1.4rem, 5vw, 1.9rem); font-weight: 700; line-height: 1.1; }
+  .cart__done-sub { font-size: 0.72rem; letter-spacing: 0.04em; }
+  .cart__done-btn { margin-top: 1rem; }
+
+  @media (max-width: 520px) {
+    .cart__panel { width: 100%; border-left: none; }
+  }
+</style>
