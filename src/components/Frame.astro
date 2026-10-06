@@ -35,7 +35,10 @@ const style = ratio ? `aspect-ratio:${ratio}` : undefined;
       fetchpriority={priority ? 'high' : 'auto'}
     />
   ) : (
-    <div class="frame__gen" role="img" aria-label={alt}></div>
+    <>
+      <div class="frame__gen" role="img" aria-label={alt}></div>
+      <span class="frame__soon mono" data-ru="ФОТО СКОРО">PHOTO COMING SOON</span>
+    </>
   )}
   <span class="frame__grain" aria-hidden="true"></span>
   {(metaLeft || metaRight) && (

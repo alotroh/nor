@@ -196,6 +196,21 @@ ul { list-style: none; padding: 0; }
   position: absolute;
   inset: 0;
 }
+.frame__soon {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.7rem;
+  letter-spacing: 0.26em;
+  color: #fff;
+  mix-blend-mode: difference;
+  opacity: 0.75;
+  pointer-events: none;
+}
 .frame__grain {
   position: absolute;
   inset: -50%;
